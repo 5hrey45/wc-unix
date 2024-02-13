@@ -2,12 +2,12 @@
 
 ## How to use?
 
-### Use go build \
+### Use go build
 
 E.G. go build -o ccwc.exe \
 ccwc.exe -flags (if any) filename
 
-### Alternatively you can use go run \
+### Alternatively you can use go run
 go run main.go -flags (if any) filename
 
 run the .go file or the executable produced by building and (provide the filename as argument or provide the text data through stdin through piping)
