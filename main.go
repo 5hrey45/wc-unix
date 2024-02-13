@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -15,10 +16,28 @@ func main() {
 	var filename string
 
 	if arglen == 1 {
-		log.Fatal("No arguments specified")
+
+		fileInfo, err := os.Stdin.Stat()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if fileInfo.Mode()&os.ModeCharDevice != 0 {
+			fmt.Println("No data piped to stdin")
+			fmt.Println("No arguments specified")
+		} else {
+			bytes, err := io.ReadAll(os.Stdin)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pipedInputGetData(bytes)
+		}
+
 	} else if arglen == 2 {
 		filename = args[1]
-		getAllData(filename)
+		data := getAllData(filename)
+		lines, words, ch := data[0], data[1], data[2]
+		fmt.Println(lines, words, ch, filename)
 	} else if arglen == 3 {
 		flag = args[1]
 		filename = args[2]
@@ -92,11 +111,40 @@ func getFileByteStream(filename string) []byte {
 	return f
 }
 
-// This funtion will print the number of lines, words, characters and filename
-func getAllData(filename string) {
+// This funtion will return the number of lines, words, characters and filename
+func getAllData(filename string) []int {
 	ch := getBytes(filename)
 	words := getWords(filename)
 	lines := getLines(filename)
 
-	fmt.Println(lines, words, ch, filename)
+	return []int{lines, words, int(ch)}
+}
+
+// This function will take the stream of text data which is piped to our program to stdin
+// and prints the number of lines, words and characters in the stream of text data
+
+// We could have overloaded the function getAllData such that it could take a bytestream,
+// But Go does not support function overloading (atleas as of now) and
+// the logic needs to be changed since the getAllData works on file and we want to work on
+// bytestream
+func pipedInputGetData(bytestream []byte) {
+	// we are writing the data to a temporary file, then calling the getAllData function to get
+	// the results, and finally deleting the temporary file.
+	// this is not optimal, and another way of doing it is to convert the bytestream to string
+	// and perform the strings.split("\n") and strings.Fields(string) to get lines and words
+	// but still needs to come up with logic for chars and bytes since we currently are using f.stat()
+	// which uses a file pointer
+	err := os.WriteFile("temp.txt", bytestream, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data := getAllData("temp.txt")
+	lines, words, ch := data[0], data[1], data[2]
+	fmt.Println(lines, words, ch)
+
+
+	err = os.Remove("temp.txt")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
