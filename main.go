@@ -9,7 +9,7 @@ import (
 func main() {
 
 	arglen := len(os.Args)
-	if arglen < 1 {
+	if arglen < 2 {
 		log.Fatal("No arguments specified")
 	}
 
