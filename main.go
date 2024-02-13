@@ -22,6 +22,7 @@ func main() {
 			log.Fatal(err)
 		}
 
+		// check whether data is piped in or not
 		if fileInfo.Mode()&os.ModeCharDevice != 0 {
 			fmt.Println("No data piped to stdin")
 			fmt.Println("No arguments specified")
@@ -148,3 +149,7 @@ func pipedInputGetData(bytestream []byte) {
 		log.Fatal(err)
 	}
 }
+
+// Todo
+// Write Tests
+// Implement the optimal approach for data piped in (without creating temp file)
