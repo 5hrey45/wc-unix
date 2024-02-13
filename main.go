@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 		case "-w":
 			// getWords(filename)
 		case "-l":
-			// getLines(filename)
+			getLines(filename)
 		case "-m":
 			getBytes(filename)
 		default:
@@ -47,3 +48,14 @@ func getBytes(filename string) {
 	fmt.Println(f.Size(), filename)
 }
 
+func getLines(filename string) {
+	f, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	stringf := string(f)
+	lines := strings.Split(stringf, "\n")
+
+	fmt.Println(len(lines), filename)
+}
