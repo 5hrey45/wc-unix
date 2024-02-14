@@ -31,27 +31,28 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			pipedInputGetData(bytes)
+			PipedInputGetData(bytes)
 		}
 
 	} else if arglen == 2 {
 		filename = args[1]
-		data := getAllData(filename)
+		data := GetAllData(filename)
 		lines, words, ch := data[0], data[1], data[2]
 		fmt.Println(lines, words, ch, filename)
+
 	} else if arglen == 3 {
 		flag = args[1]
 		filename = args[2]
 
 		switch flag {
 		case "-c":
-			fmt.Println(getBytes(filename), filename)
+			fmt.Println(GetBytes(filename), filename)
 		case "-w":
-			fmt.Println(getWords(filename), filename)
+			fmt.Println(GetWords(filename), filename)
 		case "-l":
-			fmt.Println(getLines(filename), filename)
+			fmt.Println(GetLines(filename), filename)
 		case "-m":
-			fmt.Println(getBytes(filename), filename)
+			fmt.Println(GetBytes(filename), filename)
 		default:
 			log.Fatal("Flag provided but not defined")
 		}
@@ -59,7 +60,7 @@ func main() {
 }
 
 // This funcion will return the number of bytes/characters in the file
-func getBytes(filename string) int64 {
+func GetBytes(filename string) int64 {
 	f, err := os.Stat(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -69,8 +70,8 @@ func getBytes(filename string) int64 {
 }
 
 // This function will return the number of lines in the file
-func getLines(filename string) int {
-	f := getFileByteStream(filename)
+func GetLines(filename string) int {
+	f := GetFileByteStream(filename)
 
 	// converting the bytestream f to string f
 	stringf := string(f)
@@ -86,8 +87,8 @@ func getLines(filename string) int {
 }
 
 // This function will return the number of words in the file
-func getWords(filename string) int {
-	f := getFileByteStream(filename)
+func GetWords(filename string) int {
+	f := GetFileByteStream(filename)
 
 	stringf := string(f)
 	words := strings.Fields(stringf)
@@ -101,7 +102,7 @@ func getWords(filename string) int {
 }
 
 // This funcion will return a bytestream
-func getFileByteStream(filename string) []byte {
+func GetFileByteStream(filename string) []byte {
 	// the os.ReadFile reads the file and returns a stream of bytes.
 	f, err := os.ReadFile(filename)
 
@@ -113,10 +114,10 @@ func getFileByteStream(filename string) []byte {
 }
 
 // This funtion will return the number of lines, words, characters and filename
-func getAllData(filename string) []int {
-	ch := getBytes(filename)
-	words := getWords(filename)
-	lines := getLines(filename)
+func GetAllData(filename string) []int {
+	ch := GetBytes(filename)
+	words := GetWords(filename)
+	lines := GetLines(filename)
 
 	return []int{lines, words, int(ch)}
 }
@@ -127,8 +128,8 @@ func getAllData(filename string) []int {
 // We could have overloaded the function getAllData such that it could take a bytestream,
 // But Go does not support function overloading (atleas as of now) and
 // the logic needs to be changed since the getAllData works on file and we want to work on
-// bytestream
-func pipedInputGetData(bytestream []byte) {
+// bytestream - for that, just loop through all the char in string to obtain the chars and bytes
+func PipedInputGetData(bytestream []byte) {
 	// we are writing the data to a temporary file, then calling the getAllData function to get
 	// the results, and finally deleting the temporary file.
 	// this is not optimal, and another way of doing it is to convert the bytestream to string
@@ -139,10 +140,9 @@ func pipedInputGetData(bytestream []byte) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	data := getAllData("temp.txt")
+	data := GetAllData("temp.txt")
 	lines, words, ch := data[0], data[1], data[2]
 	fmt.Println(lines, words, ch)
-
 
 	err = os.Remove("temp.txt")
 	if err != nil {
