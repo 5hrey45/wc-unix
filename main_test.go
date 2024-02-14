@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"os"
+	"strconv"
 	"testing"
 )
 
@@ -28,5 +31,17 @@ func TestGetWords(t *testing.T) {
 func TestGetLines(t *testing.T) {
 	if GetLines(filename) != dataLines {
 		t.Error("Lines does not match wc result of", dataLines)
+	}
+}
+
+func TestPipedInputGetDataOptimal(t *testing.T) {
+	bs, err := os.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	result := strconv.Itoa(dataLines) + " " + strconv.Itoa(dataWords) + " " + strconv.Itoa(dataByteSize)
+	if PipedInputGetDataOptimal(bs) != result {
+		t.Error("Results does not match wc result of", result)
 	}
 }
