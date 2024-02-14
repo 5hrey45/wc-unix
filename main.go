@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -31,7 +32,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			PipedInputGetData(bytes)
+			PipedInputGetDataOptimal(bytes)
 		}
 
 	} else if arglen == 2 {
@@ -128,7 +129,7 @@ func GetAllData(filename string) []int {
 // We could have overloaded the function getAllData such that it could take a bytestream,
 // But Go does not support function overloading (atleas as of now) and
 // the logic needs to be changed since the getAllData works on file and we want to work on
-// bytestream - for that, just loop through all the char in string to obtain the chars and bytes
+// bytestream
 func PipedInputGetData(bytestream []byte) {
 	// we are writing the data to a temporary file, then calling the getAllData function to get
 	// the results, and finally deleting the temporary file.
@@ -151,5 +152,29 @@ func PipedInputGetData(bytestream []byte) {
 }
 
 // Todo
-// Write Tests
+// Write Tests - Done
 // Implement the optimal approach for data piped in (without creating temp file)
+
+// This function will take the stream of text data which is piped to our program to stdin
+// and prints the number of lines, words and characters in the stream of text data
+// does not create intermediate files
+func PipedInputGetDataOptimal(bs []byte) string {
+	str := string(bs)
+	ch := len(bs)
+	// ch := len(str)
+
+	// we can get the number of bytes/chars by taking the size of the string or the byte stream
+
+	lineslice := strings.Split(str, "\n")
+	lines := len(lineslice) - 1
+
+	words := len(strings.Fields(str))
+
+	fmt.Println(lines, words, ch)
+	// This function does not return anything, only prints
+	// to test the output, we need to capture the stdout
+	// since it adds complexity, we are going to return the value as string
+	// after printing, for the purpose of testing
+
+	return strconv.Itoa(lines) + " " + strconv.Itoa(words) + " " + strconv.Itoa(ch)
+}
