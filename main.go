@@ -153,7 +153,7 @@ func PipedInputGetData(bytestream []byte) {
 
 // Todo
 // Write Tests - Done
-// Implement the optimal approach for data piped in (without creating temp file)
+// Implement the optimal approach for data piped in (without creating temp file) - Done
 
 // This function will take the stream of text data which is piped to our program to stdin
 // and prints the number of lines, words and characters in the stream of text data
